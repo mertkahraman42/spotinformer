@@ -18,11 +18,8 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var searchTextField: UITextField!
     
-    var searchQueryTextInput: String = "" {
-        didSet {
-            print(searchQueryTextInput)
-        }
-    }
+    var searchQueryTextInput: String = ""
+    var searchURL = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,17 +40,18 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
         
     }
     
-
-    // MARK: - Segue
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    func generateURL() {
+        let searchQuery = searchQueryTextInput.replacingOccurrences(of: " ", with: "+")
+        searchURL = "https://api.spotify.com/v1/search?q=\(searchQuery)&type=track&limit=20"
+    }
+    
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "searchSegue" {
             if let searchVC = segue.destination as? TableViewController {
                 self.searchTextField.resignFirstResponder()
-                searchVC.searchQuery = searchQueryTextInput
-//                searchVC.formatSeachQuery()
-                searchVC.generateURL()
+                generateURL()
+                searchVC.searchURL = self.searchURL
                 searchVC.fetchData()
             }
         }

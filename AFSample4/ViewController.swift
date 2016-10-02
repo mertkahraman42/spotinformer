@@ -12,22 +12,10 @@ import Alamofire
 class TableViewController: UITableViewController {
     
     var names = [String]()
+    var albums = [String]()
+    var coverImages = [UIImage]()
     
-    var searchQuery: String = ""
     var searchURL = ""
-    
-//    func formatSeachQuery() {
-//        for var character in searchQuery.characters {
-//            if character == " " {
-//                character = "+"
-//            }
-//        }
-//        print("Formatted Search Query is \(searchQuery)")
-//    }
-    
-    func generateURL() {
-        searchURL = "https://api.spotify.com/v1/search?q=\(self.searchQuery)&type=track&limit=20"
-    }
     
     func fetchData() {
         callAlamo(url: searchURL)
@@ -52,16 +40,31 @@ class TableViewController: UITableViewController {
         do {
             var readableJSON = try JSONSerialization.jsonObject(with: JSONData, options: .mutableContainers) as! JSONStandard
             if let tracks = readableJSON["tracks"] as? JSONStandard {
+               
+                // Get the tracknames
                 if let items = tracks["items"] {
-                    
                     for i in 0..<items.count {
                         let item = items[i] as! JSONStandard
                         
+                        // Get track names
                         let name = item["name"] as! String
-                        
                         names.append(name)
-                        
                         self.tableView.reloadData()
+                        
+                        // Get album names
+                        let albumItem = item["album"] as! JSONStandard
+                        let albumName = albumItem["name"] as! String
+                        albums.append(albumName)
+                        
+                        // TODO: Try to get the images on the User_Initiated thread
+                        // dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                        // Get covers
+                        var covers = albumItem["images"] as! [JSONStandard]
+                        let cover64 = covers[2] 
+                        let coverURL = URL(string: cover64["url"] as! String) ?? URL(fileURLWithPath: "")
+                        let coverImage = UIImage(data: try Data(contentsOf: coverURL))
+                        coverImages.append(coverImage!)
+                        //}
                     }
                 }
             }
@@ -79,6 +82,8 @@ class TableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")
         
         cell?.textLabel?.text = names[indexPath.row]
+        cell?.detailTextLabel?.text = albums[indexPath.row]
+        cell?.imageView?.image = coverImages[indexPath.row]
         
         return cell!
     }
