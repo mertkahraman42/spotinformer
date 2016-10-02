@@ -16,14 +16,14 @@ class TableViewController: UITableViewController {
     var searchQuery: String = ""
     var searchURL = ""
     
-    func formatSeachQuery() {
-        for var character in searchQuery.characters {
-            if character == " " {
-                character = "+"
-            }
-        }
-        print("Formatted Search Query is \(searchQuery)")
-    }
+//    func formatSeachQuery() {
+//        for var character in searchQuery.characters {
+//            if character == " " {
+//                character = "+"
+//            }
+//        }
+//        print("Formatted Search Query is \(searchQuery)")
+//    }
     
     func generateURL() {
         searchURL = "https://api.spotify.com/v1/search?q=\(self.searchQuery)&type=track&limit=20"

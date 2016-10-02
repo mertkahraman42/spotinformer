@@ -50,8 +50,9 @@ class SearchViewController: UIViewController, UITextFieldDelegate {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "searchSegue" {
             if let searchVC = segue.destination as? TableViewController {
+                self.searchTextField.resignFirstResponder()
                 searchVC.searchQuery = searchQueryTextInput
-                searchVC.formatSeachQuery()
+//                searchVC.formatSeachQuery()
                 searchVC.generateURL()
                 searchVC.fetchData()
             }
